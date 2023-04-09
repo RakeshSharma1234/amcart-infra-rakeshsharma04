@@ -1,0 +1,66 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: nagp-amcart-namespace
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: keycloak-lb-service
+  namespace: nagp-amcart-namespace
+spec:
+  type: LoadBalancer
+  selector:
+    app: keycloak-service
+  ports:
+  - port: 80
+    targetPort: 8080
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: keycloak-config
+  namespace: nagp-amcart-namespace
+data:
+  KEYCLOAK_ADMIN: 'admin'
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: keycloak-secret
+  namespace: nagp-amcart-namespace
+type: Opaque
+data:
+  KEYCLOAK_ADMIN_PASSWORD: cmFrZXNoQDEyMw==
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: keycloak-deployment
+  namespace: nagp-amcart-namespace
+spec:
+  selector:
+      matchLabels:
+        app: keycloak-service
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: keycloak-service
+    spec:
+      containers:
+       - name: keycloak-service
+         image: quay.io/keycloak/keycloak:21.0.2
+         ports:
+         - containerPort: 8080
+         args: ["start-dev"]
+         envFrom:
+            - configMapRef:
+                name: keycloak-config
+            - secretRef:
+                name: keycloak-secret
