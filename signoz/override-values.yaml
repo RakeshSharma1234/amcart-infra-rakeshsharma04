@@ -1,0 +1,12 @@
+global:
+  storageClass: gce-resizable
+  cloud: gcp
+
+clickhouse:
+  installCustomStorageClass: true
+
+frontend:
+  service:
+    type: LoadBalancer
+
+
