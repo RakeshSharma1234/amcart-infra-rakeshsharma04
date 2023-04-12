@@ -55,7 +55,7 @@ spec:
     spec:
       containers:
        - name: keycloak-service
-         image: quay.io/keycloak/keycloak:21.0.2
+         image: us-central1-docker.pkg.dev/nagp-amcart-rakesh/nagp-amcart-repo/keycloak:v1
          ports:
          - containerPort: 8080
          args: ["start-dev"]
@@ -64,3 +64,10 @@ spec:
                 name: keycloak-config
             - secretRef:
                 name: keycloak-secret
+         env:
+         - name:  JAVA_TOOL_OPTIONS
+           value: "-javaagent:/usr/src/apm/agent.jar"
+         - name: OTEL_SERVICE_NAME
+           value: "keycloak"
+         - name: OTEL_EXPORTER_OTLP_ENDPOINT
+           value: "http://amcart-signoz-otel-collector.amcart-platform.svc.cluster.local:4317"
