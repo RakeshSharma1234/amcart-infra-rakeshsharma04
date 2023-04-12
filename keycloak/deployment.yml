@@ -8,7 +8,7 @@ metadata:
 kind: Service
 apiVersion: v1
 metadata:
-  name: keycloak-lb-service
+  name: keycloak-service
   namespace: nagp-amcart-namespace
 spec:
   type: LoadBalancer
